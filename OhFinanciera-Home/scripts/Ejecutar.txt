@@ -1,0 +1,38 @@
+Ejecutar Back
+cd
+pip install -r requirements.txt
+python -m uvicorn main:app --reload --port 8002
+
+Ejecutar End
+cd
+npm install
+npm run dev
+
+
+
+En lugar de mover código o arrastrar la laptop, vas a clonar el estado exacto de tu base de datos actual (la que ya funciona con el usuario corregido) en un solo archivo de texto. Al llegar al laboratorio, lo abres en el pgAdmin de allá, le das Play, y listo.
+
+Aquí tienes el paso a paso exacto de lo que vas a hacer en tu casa antes de salir:
+
+1. **Abre pgAdmin 4** en tu laptop.
+2. Busca tu base de datos **`bd_core_financiero`** en la lista de la izquierda.
+3. Dale **clic derecho** a la base de datos y selecciona la opción **Backup...** (Respaldo).
+4. En la pestaña *General*, donde dice *Filename*, dale al icono de la carpetita y elige dónde guardarlo (por ejemplo, en tu Escritorio). Ponle de nombre `respaldo_homebanking.sql`.
+5. En *Format*, asegúrate de seleccionar **Plain** (esto hace que se guarde como puro texto con comandos SQL).
+6. Dale al botón de abajo que dice **Backup**.
+
+¡Listo! Ese archivo `.sql` que se creó te lo mandas a tu correo, a un grupo de WhatsApp contigo mismo, o lo metes en un USB. Ahí está guardada toda tu base de datos actual con el usuario `cli000007` y su hash perfecto.
+
+---
+
+### ¿Qué haces cuando llegues al laboratorio? 🏫
+
+Cuando te toque sentarte en la máquina del laboratorio, solo tienes que seguir este orden de supervivencia:
+
+1. **Clona el código:** Descarga las carpetas del Backend y Frontend del profesor en esa máquina (o llévalas en tu USB). Corre el `npm install` o lo que requiera el frontend.
+2. **Prepara pgAdmin:** Abre el pgAdmin del laboratorio, crea una base de datos en blanco llamada exactamente **`bd_core_financiero`**.
+3. **El Truco de Magia:** Abre el *Query Tool* en esa nueva base de datos vacía, arrastra o abre tu archivo `respaldo_homebanking.sql`, y dale **Play (F5)**.
+
+En tres segundos, la base de datos del laboratorio va a ser un clon idéntico de la que tienes hoy en tu casa. Levantará con el mismo hash de contraseña que acabamos de parir, y cuando prendas el Backend con `uvicorn`, el login va a entrar de una sin chistar. No vas a depender de Supabase, ni de internet, ni de si tu laptop se desconfigura en el camino.
+
+¿Para cuándo tienes que llevar este laboratorio a clase?

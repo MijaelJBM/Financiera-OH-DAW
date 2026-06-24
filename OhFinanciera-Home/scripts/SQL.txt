@@ -1,0 +1,57 @@
+from app.core.cfg_security import hashear_password
+print("====================================")
+print("EL HASH SEGURO DEL PROFE ES:", hashear_password("demo1234"))
+print("====================================")
+
+
+-- 2. Insertamos el usuario 'cli000007' amarrado al pkcliente = 7
+-- Probamos con el hash estándar de bcrypt para 'demo1234'
+INSERT INTO usuarios_homebanking (
+    pkusuario, 
+    pkcliente, 
+    username, 
+    password_hash, 
+    ultimo_acceso, 
+    intentos_fallidos, 
+    bloqueado,
+    activo
+) VALUES (
+    (SELECT COALESCE(MAX(pkusuario), 0) + 1 FROM usuarios_homebanking),
+    7, -- pkcliente 7 que ya viene en la data del profe
+    'cli000007',
+    '$2b$12$vI9N4q/Z7YmdrR9bJbEqK.EwZpEqmOHe7lTmWbyO6Xm6nN8O0pIuq', -- Hash bcrypt para 'demo1234'
+    CURRENT_TIMESTAMP, 
+    0, 
+    'N', 
+    'S'
+);
+
+-- REVISIÓN DE SEGURIDAD: 
+-- Si el script de arriba corre bien, vamos a dejar guardada la consulta 
+-- para verificar que el JOIN con dcliente devuelva datos.
+SELECT u.username, u.bloqueado, u.activo, c.codcliente, c.pkcliente
+FROM usuarios_homebanking u
+JOIN dcliente c ON c.pkcliente = u.pkcliente
+WHERE u.username = 'cli000007';
+
+SELECT username, password_hash, intentos_fallidos, bloqueado, activo 
+FROM usuarios_homebanking;
+
+
+-- 1. Reseteamos los intentos a 0 y nos aseguramos de que no esté bloqueado
+UPDATE usuarios_homebanking 
+SET intentos_fallidos = 0, 
+    bloqueado = 'N', 
+    activo = 'S'
+WHERE username = 'cli000007';
+
+-- 2. Actualizamos la contraseña asegurando el formato exacto que pide Python
+-- Usamos un string limpio sin espacios para '$2b$12$vI9N4q/Z7YmdrR9bJbEqK.EwZpEqmOHe7lTmWbyO6Xm6nN8O0pIuq'
+UPDATE usuarios_homebanking 
+SET password_hash = TRIM('$2b$12$vI9N4q/Z7YmdrR9bJbEqK.EwZpEqmOHe7lTmWbyO6Xm6nN8O0pIuq')
+WHERE username = 'cli000007';
+
+-- 3. Verificación rápida para asegurarnos de que no hay espacios fantasmas
+SELECT username, LENGTH(password_hash) as largo_hash, bloqueado, activo 
+FROM usuarios_homebanking 
+WHERE username = 'cli000007';
